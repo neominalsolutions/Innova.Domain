@@ -16,7 +16,7 @@ namespace Account.Domain.AccountAggregates
 
     public AccountTransactionType Type { get; init; } // Deposit, WithDraw
 
-    public AccountChannelType ChannelType { get; init; } // Bank, Online, ATM
+    public AccountTransactionChannelType ChannelType { get; init; } // Bank, Online, ATM
 
     public string AccountId { get; init; } // FK
 
@@ -29,7 +29,7 @@ namespace Account.Domain.AccountAggregates
     /// <param name="money"></param>
     /// <param name="type"></param>
     /// <param name="channelType"></param>
-    public AccountTransaction(string accountId, Money money, AccountTransactionType type, AccountChannelType channelType)
+    public AccountTransaction(string accountId, Money money, AccountTransactionType type, AccountTransactionChannelType channelType)
     {
       Id = Guid.NewGuid().ToString();
       CreatedAt = DateTime.Now;

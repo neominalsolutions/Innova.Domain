@@ -23,6 +23,50 @@ namespace Account.Domain.AccountAggregates
     public bool IsClosed { get; private set; } // Müşterinin hesabının kapalı olup olmadığı
     public string CloseReason { get; private set; }
 
+    public bool IsBlocked { get; private set; } // Hesap bloke edildiğinde para çekme ve para gönderme işlemleri yapılmasın
+    public string BlockReason { get; private set; }
+
+    /// <summary>
+    /// Deposit ve WithDraw işlemleri olduğunda sadece account transaction'a append only kayıt düşücez.
+    /// </summary>
+
+    private List<AccountTransaction> _transactions = new List<AccountTransaction>();
+    public IReadOnlyList<AccountTransaction> Transactions => _transactions;
+
+
+    public void Block(string blockReason)
+    {
+      BlockReason = blockReason;
+      IsBlocked = true;
+    }
+
+
+    /// <summary>
+    /// Para yatırma işlemi
+    /// DIP prensimi ile Account Entity ile AccountDomain Service birbirine zayıf bağlı yapmak için araya bir interface IAccountDomainService interface koyduk
+    /// </summary>
+    public void Deposit(Money money, AccountTransactionChannelType transactionChannelType, IAccountDomainService accountDomainService)
+    {
+      // önce kuralları kontrol etmek için domain service çağıralım.
+      // eğer ki aşağıdaki kural setlerinden geçebilir exception almaz isek bu durumda Balance değeri artsın.
+      accountDomainService.Deposit(this, money, transactionChannelType);
+
+      Balance += money; // bakiye artırma işlemi, entity state değiştirme işlemi bu sınıf entity sınıfı içinde yapılıyor. entity state dışında bu state bozucak durumları ise domain serviceler ile koruma altına alabilir. Domain serviceler stateless tanımlanmalıdır entity ait herhangi bir state değişimin domain service içerisinde yapmayız.
+
+      // para yatırma işlemindeki logicler eğer yapabiliyorsa entity içerisinde yaparız.
+      // fakat entity içerisinde yapamadığımızı durumlarda olabilir. entity değerlerinin db üzerinden bulunması gibi db bazlı operasyonları burada sınıfların içerisinde yapmamalıyız.
+      // belirli logicler uygulanacak
+    }
+
+
+    //public async void Deposit(Money money, AccountTransactionChannelType transactionChannelType, IAccountRepository accountRepository)
+    //{
+
+    //  var account2 = await accountRepository.FindAsync(x => x.Id == Id);
+
+    //  Balance += money; 
+    //}
+
 
     /// <summary>
     /// Hesap kapatma işlemi
@@ -47,6 +91,19 @@ namespace Account.Domain.AccountAggregates
 
     }
 
-
+    /// <summary>
+    /// Hesabı kapalı iken banka kanalı ile ödeme yapıp hesabı açmak istediğimizde burayı çağırırız.
+    /// </summary>
+    public void Open()
+    {
+      if(IsBlocked || IsClosed)
+      {
+        if(Balance < Money.Zero("TL"))
+        {
+          IsBlocked = false;
+          IsClosed = false;
+        }
+      }
+    }
   }
 }
