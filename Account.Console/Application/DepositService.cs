@@ -28,10 +28,17 @@ namespace Account.Console.Application
 
       // stateless çalışır
 
-      if (AccountTransactionChannelType.ATM.Key == request.Channel)
-      {
-        acc.Deposit(new Money(request.Amount, request.Currency), AccountTransactionChannelType.ATM, accountDomainService);
-      }
+      // domain service ile aggergate root deposit işlemi için ayrı ayrı çağırıldığında anlam karmaşası oluşabilir. bu durum application katmanını yazan geliştirici yanlışlıklar domain service deposit methodunu çağırmadan bussiness kurallarsın account deposit methodunu çalıştırabilir. Bu sebeple entity içerisinde domain servicelerin domain e hizmet edecek şekilde çalıştırılmasını tavsiye ediyoruz.
+
+      //if (AccountTransactionChannelType.ATM.Key == request.Channel)
+      //{
+      //  accountDomainService.Deposit(acc, new Money(request.Amount, request.Currency), AccountTransactionChannelType.ATM);
+
+      //  acc.Deposit(new Money(request.Amount, request.Currency), AccountTransactionChannelType.ATM);
+      //}
+
+      // Double Dispatch yöntemi diyoruz.
+      acc.Deposit(new Money(request.Amount, request.Currency), AccountTransactionChannelType.ATM, accountDomainService);
 
 
       await accountRepository.UpdateAsync(acc);

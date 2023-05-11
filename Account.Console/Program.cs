@@ -4,33 +4,38 @@ using Account.Console.Data;
 using Account.Console.Dto;
 using Account.Domain.AccountAggregates;
 using Account.Domain.SeedWorks;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-Console.WriteLine("Hello, World!");
+//Console.WriteLine("Hello, World!");
 
 
-Account.Domain.AccountAggregates.Account acc = new Account.Domain.AccountAggregates.Account();
+#region Test
+
+//Account.Domain.AccountAggregates.Account acc = new Account.Domain.AccountAggregates.Account();
 //acc.Transactions.Add(new AccountTransaction())
 //acc.IsBlocked = true;
 //acc.BlockReason = "iptal";
-acc.Block("hesap geçişi");
-acc.Close("hesap kapanış");
+//acc.Block("hesap geçişi");
+//acc.Close("hesap kapanış");
 
-var service = new AccountDomainService(new EFAccountRepository());
-acc.Deposit(new Money(5000,"TL"),AccountTransactionChannelType.ATM, service);
-var repo = new EFAccountRepository();
+//var service = new AccountDomainService(new EFAccountRepository());
+//acc.Deposit(new Money(5000,"TL"),AccountTransactionChannelType.ATM, service);
+//var repo = new EFAccountRepository();
 
-try
-{
-  var depositUseCase = new DepositService(repo, service);
-  var depositDto = new AccountDepositDto();
-  var response = await depositUseCase.HandleAsync(depositDto); // iş başladı application katmanında 
-                                                        // domain katmanında saveChanges yapmak yerine applicationKatmanında saveChanges() işi bitiririz.
-}
-catch (Exception ex)
-{
+//try
+//{
+//  var depositUseCase = new DepositService(repo, service);
+//  var depositDto = new AccountDepositDto();
+//  var response = await depositUseCase.HandleAsync(depositDto); // iş başladı application katmanında 
+//                                                        // domain katmanında saveChanges yapmak yerine applicationKatmanında saveChanges() işi bitiririz.
+//}
+//catch (Exception ex)
+//{
 
-  Console.WriteLine(ex.Message);
-}
+//  Console.WriteLine(ex.Message);
+//}
 
 
 
@@ -45,17 +50,103 @@ catch (Exception ex)
 //service.Deposit()
 
 
-Location l1 = new Location(23.563, 24.789);
-// l1.Lat = 5;
+//Location l1 = new Location(23.563, 24.789);
+//// l1.Lat = 5;
 
-Location l2 = new Location(23.564, 24.786);
+//Location l2 = new Location(23.564, 24.786);
 
-Console.WriteLine("l1",l1.ToString());
-Console.WriteLine("l2", l2.ToString());
-
-
-var r1 = Location.Equals(l1, l2); // l1 ile l2 aynı değerlere mi eşit true
-var r2 = Location.ReferenceEquals(l1, l2); // aynı class referans mı false
+//Console.WriteLine("l1",l1.ToString());
+//Console.WriteLine("l2", l2.ToString());
 
 
-Console.WriteLine($"eşit mi {l1.Equals(l2)}");
+//var r1 = Location.Equals(l1, l2); // l1 ile l2 aynı değerlere mi eşit true
+//var r2 = Location.ReferenceEquals(l1, l2); // aynı class referans mı false
+
+
+//Console.WriteLine($"eşit mi {l1.Equals(l2)}");
+
+#endregion
+
+
+public class Program
+{
+
+  public static void Main(string[] args)
+  {
+    var host = CreateHostBuilder(args).Build();
+    // resolve edicez
+    var accountRepo = host.Services.GetRequiredService<IAccountRepository>(); // DapperAccountRepository
+    // intance uygulama aldı
+    // service locator.
+    var accountDomainService = host.Services.GetRequiredService<IAccountDomainService>(); // AccountDomainService
+    var mediator = host.Services.GetRequiredService<IMediator>();
+
+    try
+    {
+      // 1.test case 30000 tl üzerinden atmden para yatırılamaz
+      // var acc = new Account.Domain.AccountAggregates.Account("111-222-333-444", "TR 111-222-333-444-555", "1");
+      // acc.Deposit(new Money(31000, "TL"), AccountTransactionChannelType.ATM, accountDomainService);
+
+      // 2 test case 10000 tl online atmden para yatırılamaz
+      // acc.Deposit(new Money(101000, "TL"), AccountTransactionChannelType.Online, accountDomainService);
+
+      // 3. test case hafta sonu para gönderme
+      // acc.Deposit(new Money(6000, "TL"), AccountTransactionChannelType.Online, accountDomainService);
+
+      //var acc2 = new Account.Domain.AccountAggregates.Account("111-222-333-444", "TR 111-222-333-444-555", "1", true); // bloklanmış hesap sadece Banka üzerindne yatabilir
+      //acc2.Deposit(new Money(6000, "TL"), AccountTransactionChannelType.Online, accountDomainService);
+
+      // var acc2 = new Account.Domain.AccountAggregates.Account("111-222-333-444", "TR 111-222-333-444-555", "1", false,true); // closed account 
+      // acc2.Deposit(new Money(6000, "TL"), AccountTransactionChannelType.Bank, accountDomainService);
+
+      // hesap kapama işlemi
+      var acc3 = new Account.Domain.AccountAggregates.Account("111-222-333-444", "TR 111-222-333-444-555", "1");
+      // domain service method parametres olarak çağırma double dipatch yöntemi
+      //acc3.Deposit(new Money(600, "TL"), AccountTransactionChannelType.Bank, accountDomainService);
+      //acc3.Close("Keyfi");
+      // closed account 
+      // acc2.Deposit(new Money(6000, "TL"), AccountTransactionChannelType.Bank, accountDomainService);
+
+      // event bazlı domain service çağırma yöntemi, domain event
+      acc3.Deposit(new Money(36000, "TL"), AccountTransactionChannelType.ATM);
+
+      // foreach ile dönüp nesne'in instance ne kadar event varsa hepsini fırlatabiliriz.
+      mediator.Publish(acc3.DomainEvents[0]);
+      // Eventi yayımlamak için kullanılıyoruz. mediator üzerinden event fırlatma yapıyoruz.
+      // eventin hangi handler'ı tetikleyeceğini kendisi bulacak.
+
+      // repo.saveChanges();
+
+    }
+    catch (Exception ex)
+    {
+
+      Console.WriteLine(ex.Message);
+    }
+
+   
+
+
+  }
+
+  public static IHostBuilder CreateHostBuilder(string[] args) =>
+    Host.CreateDefaultBuilder(args)
+        .ConfigureServices((hostContext, services) =>
+        {
+          //services.AddDbContext<AppDbContext>();
+          // IoC Container
+          // register edildi.
+          services.AddScoped<IAccountRepository, DapperAccountRepository>();
+          services.AddScoped<IAccountDomainService, AccountDomainService>();
+          services.AddMediatR(opt =>
+          {
+            opt.RegisterServicesFromAssemblyContaining<Account.Domain.AccountAggregates.Account>();
+          });
+          // remove the hosted service
+          // services.AddHostedService<Worker>();
+
+          // register your services here.
+        });
+}
+
+

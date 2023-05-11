@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Account.Domain.AccountAggregates.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,7 +53,7 @@ namespace Account.Domain.AccountAggregates
       if(money > new Money(30000,"TL") && channelType == AccountTransactionChannelType.ATM)
       {
         // TranferLimitException
-        throw new Exception("Günlük ATM den para transfer limiti 30.000 TL'dir");
+        throw new TranferLimitException("Günlük ATM den para transfer limiti 30.000 TL'dir");
         // uygulama kodları hatadan dolayı kesilir ve işlem gerçekleşmeyecektir.
       }
 

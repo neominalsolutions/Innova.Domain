@@ -34,6 +34,37 @@ namespace Account.Domain.AccountAggregates
     public IReadOnlyList<AccountTransaction> Transactions => _transactions;
 
 
+    public Account(string accountNumber, string iban, string customerId)
+    {
+      Id = Guid.NewGuid().ToString();
+      AccountNumber = accountNumber;
+      IBAN = iban;
+      CustomerId = customerId;
+      Balance = Money.Zero("TL");
+    }
+
+    public Account(string accountNumber, string iban, string customerId, bool isBlocked)
+    {
+      Id = Guid.NewGuid().ToString();
+      AccountNumber = accountNumber;
+      IBAN = iban;
+      CustomerId = customerId;
+      Balance = Money.Zero("TL");
+      IsBlocked = isBlocked;
+    }
+
+    public Account(string accountNumber, string iban, string customerId, bool isBlocked, bool isClosed)
+    {
+      Id = Guid.NewGuid().ToString();
+      AccountNumber = accountNumber;
+      IBAN = iban;
+      CustomerId = customerId;
+      Balance = Money.Zero("TL");
+      IsBlocked = isBlocked;
+      IsClosed = isClosed;
+    }
+
+
     public void Block(string blockReason)
     {
       BlockReason = blockReason;
@@ -41,21 +72,59 @@ namespace Account.Domain.AccountAggregates
     }
 
 
+    //public void Deposit(Money money, AccountTransactionChannelType transactionChannelType)
+    //{
+    //  Balance += money;
+    //}
+
+
+
+
+   
     /// <summary>
     /// Para yatırma işlemi
     /// DIP prensimi ile Account Entity ile AccountDomain Service birbirine zayıf bağlı yapmak için araya bir interface IAccountDomainService interface koyduk
+    /// Bir entity içerisinde bir servisin bussiness kurallar için yeterli olmadığı durumlarda methoda ilgili domain service dependcy injection yöntemi ile paramtre olarak geçirilir. bu durumda çift taraflı bir kontrol mekanizması olduğu için bu yönteme double dispatch çift taraflı sevk adı verilir. Peki double dispath yapmadan nasıl bu işlemi yapabiliriz.
     /// </summary>
     public void Deposit(Money money, AccountTransactionChannelType transactionChannelType, IAccountDomainService accountDomainService)
     {
       // önce kuralları kontrol etmek için domain service çağıralım.
       // eğer ki aşağıdaki kural setlerinden geçebilir exception almaz isek bu durumda Balance değeri artsın.
+      Balance += money;
       accountDomainService.Deposit(this, money, transactionChannelType);
 
-      Balance += money; // bakiye artırma işlemi, entity state değiştirme işlemi bu sınıf entity sınıfı içinde yapılıyor. entity state dışında bu state bozucak durumları ise domain serviceler ile koruma altına alabilir. Domain serviceler stateless tanımlanmalıdır entity ait herhangi bir state değişimin domain service içerisinde yapmayız.
+
+      // farklı bir aggregate üzerinden işlem yapmak istersek bu durumda eventi domain service kodu çalıştıktan sonra çağıralımç
+
+       
+      // deposit işlemi sonrında işlem transaction kaydı girdik account nesnesi update olurken account transaction append only olarak eklenecek.
+      _transactions.Add(new AccountTransaction(this.Id, money, AccountTransactionType.Deposit, transactionChannelType));
+
+     // bakiye artırma işlemi, entity state değiştirme işlemi bu sınıf entity sınıfı içinde yapılıyor. entity state dışında bu state bozucak durumları ise domain serviceler ile koruma altına alabilir. Domain serviceler stateless tanımlanmalıdır entity ait herhangi bir state değişimin domain service içerisinde yapmayız.
 
       // para yatırma işlemindeki logicler eğer yapabiliyorsa entity içerisinde yaparız.
       // fakat entity içerisinde yapamadığımızı durumlarda olabilir. entity değerlerinin db üzerinden bulunması gibi db bazlı operasyonları burada sınıfların içerisinde yapmamalıyız.
       // belirli logicler uygulanacak
+    }
+
+
+    /// <summary>
+    /// Domain Event yöntemi ile bussiness rules check ve aggregate haberleşmesi
+    /// </summary>
+    /// <param name="money"></param>
+    /// <param name="transactionChannelType"></param>
+    public void Deposit(Money money, AccountTransactionChannelType transactionChannelType)
+    {
+      // önce kuralları kontrol etmek için domain service çağıralım.
+      // eğer ki aşağıdaki kural setlerinden geçebilir exception almaz isek bu durumda Balance değeri artsın.
+      Balance += money;
+
+      // domain kurallarını kontrol etmeyi domain evente bıraktık bu sayede account aggregate ile account aggregate dışındaki başka aggregateler ile işlem yapma fırsatı buluyoruz.
+      var @event = new DepositSubmitted(this, money, transactionChannelType);
+      AddDomainEvent(@event);
+
+  
+      _transactions.Add(new AccountTransaction(this.Id, money, AccountTransactionType.Deposit, transactionChannelType));
     }
 
 
@@ -98,7 +167,7 @@ namespace Account.Domain.AccountAggregates
     {
       if(IsBlocked || IsClosed)
       {
-        if(Balance < Money.Zero("TL"))
+        if(Balance > Money.Zero("TL"))
         {
           IsBlocked = false;
           IsClosed = false;

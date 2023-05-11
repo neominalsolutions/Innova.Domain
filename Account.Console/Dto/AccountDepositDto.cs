@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Account.Console.Dto
 {
+  // Use Case Rules
   public class AccountDepositDto
   {
     [Required(ErrorMessage = "CustomerId boş geçilemez")]
