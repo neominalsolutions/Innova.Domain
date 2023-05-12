@@ -11,6 +11,8 @@ namespace Account.Domain.AccountAggregates
   public class AccountTransaction:Entity<string>
   {
 
+
+
     // Transaction Money 500 TL
     public Money Money { get; init; }
 
@@ -37,6 +39,11 @@ namespace Account.Domain.AccountAggregates
       Type = type;
       ChannelType = channelType;
       AccountId = accountId;
+    }
+
+    public AccountTransaction()
+    {
+
     }
 
     /// No aşağıdaki method ile accounttransaction değerini güncellemek doğru değildir. AccountTransaction kaydı Account nesnesi aggregate nesne üzerinden transaction bütünlülüğü bozulmayacak şekilde yönetilmelidir.

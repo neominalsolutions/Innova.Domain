@@ -11,12 +11,15 @@ using System.Threading.Tasks;
 
 namespace Account.Console.Data.Contexts
 {
-  public class AccountContext:DbContext
+  /// <summary>
+  /// Bankacılık işlemlerini yönettiğimiz Bounded Context, Müşterilerin Hesaplarının yöntetimi yaparız. Para çekme ve Para yatırma işlemleri bu Bounded Context üzerinden yapılır.
+  /// </summary>
+  public class BankContext:DbContext
   {
 
     private readonly IMediator mediator;
 
-    public AccountContext(IMediator mediator)
+    public BankContext(IMediator mediator)
     {
       this.mediator = mediator;
     }
@@ -24,6 +27,7 @@ namespace Account.Console.Data.Contexts
     // DbSet ile tabloların tanımını yaptık
     // DbSetleri DDD da aggregate bazlı tutuyoruz.
     public DbSet<Account.Domain.AccountAggregates.Account> Accounts { get; set; }
+    public DbSet<Account.Domain.CustomerAggregates.Customer> Customers { get; set; }
 
 
     /// <summary>
@@ -47,7 +51,7 @@ namespace Account.Console.Data.Contexts
 
 
       // PK
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().ToTable("Account", "AccountContext");
+      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().ToTable("Account", "BankContext");
       // veri tabanında direk şema bazlı tabloları ayırmak için kullandık
       modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().HasKey(x => x.Id);
       modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().HasIndex(x => x.AccountNumber).IsUnique();
@@ -68,16 +72,28 @@ namespace Account.Console.Data.Contexts
       // dosyadan okuma tekniğini kullanalım
       modelBuilder.ApplyConfiguration(new AccountTransactionConfiguration());
 
+      // customer ayarları
 
-      base.OnModelCreating(modelBuilder);
+      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().ToTable("Customer", "BankContext");
+      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().HasKey(x => x.Id);
+      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().Property(x => x.Name).HasMaxLength(50);
+      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().Property(x => x.SurName).HasMaxLength(70);
+      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().HasIndex(x => x.PhoneNumber).IsUnique();
+      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().HasMany(x => x.Accounts);
+
+
+       base.OnModelCreating(modelBuilder);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
       // save olmadan önce entityler üzerinde tanımlanmış tüm domain eventleri fırlatmak pulish etmek nesnelerin statelerini domain eventler vasıtası ile değiştirmek sonrasında savechanges ile context bazlı single transaction bütünlülüğü sağlamak.
-      await this.mediator.DispatchDomainEventsAsync(this);
+
       // yukarıda domain eventler fırlatılarak entity stateleri domain serviceler vasıtası ile kontrol edilir.validate edilir. veya bir aggreagate den başka bir aggregate'e müdehale edilip başka bir aggregate state değişimi olması sağlanır. ve değişen tüm aggregateler ve aggregate altındaki tüm entity stateleri database savechanges ile uygulanır.
-      return await base.SaveChangesAsync(cancellationToken);
+      // Single Transaction Scope
+      await this.mediator.DispatchDomainEventsAsync(this);
+      return await base.SaveChangesAsync(cancellationToken); // tek bir execute sorgusu
+      
     }
 
   }

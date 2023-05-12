@@ -34,6 +34,11 @@ namespace Account.Domain.AccountAggregates
     public IReadOnlyList<AccountTransaction> Transactions => _transactions;
 
 
+    public Account()
+    {
+
+    }
+
     public Account(string accountNumber, string iban, string customerId)
     {
       Id = Guid.NewGuid().ToString();
