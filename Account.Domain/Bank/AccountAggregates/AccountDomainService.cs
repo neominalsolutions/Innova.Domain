@@ -88,7 +88,23 @@ namespace Account.Domain.AccountAggregates
 
     public void WithDraw(Account acc, Money money, AccountTransactionChannelType channelType)
     {
-      throw new NotImplementedException();
+      
+      if(acc.IsBlocked || acc.IsClosed)
+      {
+        throw new Exception("Blokeli yada kapalı hesaptan para çekilemez");
+      }
+
+      // atmden günlük 5000 TL limit var
+      if(channelType == AccountTransactionChannelType.ATM && money > new Money(5000, money.Currency))
+      {
+        throw new Exception("Günlük ATM para para çekme limit 5000 TL'dir");
+      }
+      else if(channelType == AccountTransactionChannelType.Online && money > new Money(100000, money.Currency))
+      {
+        throw new Exception("Günlük Online para çekme limit 100,000 TL'dir");
+      }
+
+
     }
   }
 }
