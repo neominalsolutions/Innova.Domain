@@ -7,42 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Account.Domain", "Account.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Account.Console", "Account.Console\Account.Console.csproj", "{B8E7AF5B-67CD-4118-A638-481FF92CB323}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D4392713-E4B5-4CEC-8E56-1E30A31F07F7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankContext.API", "BankContext.API\BankContext.API.csproj", "{BD732F40-FF6B-4C9A-83DE-8D0BF1FB9587}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bank.Application", "Bank.Application", "{1F0C4F9F-C511-402B-A51C-0D7560A7D09B}"
-	ProjectSection(SolutionItems) = preProject
-		ReadMe.txt = ReadMe.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bank.Domain", "Bank.Domain", "{5D3BF994-97EC-426B-AC59-39500F2356B0}"
-	ProjectSection(SolutionItems) = preProject
-		ReadMe.txt = ReadMe.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bank.Infrasture", "Bank.Infrasture", "{E02A053F-3F96-4A22-B3A5-319747606EF9}"
-	ProjectSection(SolutionItems) = preProject
-		ReadMe.txt = ReadMe.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Order.Application", "Order.Application", "{7AD6BA7B-4078-4FA7-B52E-696B79B23BC4}"
-	ProjectSection(SolutionItems) = preProject
-		ReadMe.txt = ReadMe.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Order.Domain", "Order.Domain", "{D3B6B0A4-ADA3-449D-BD42-48734F4F1A70}"
-	ProjectSection(SolutionItems) = preProject
-		ReadMe.txt = ReadMe.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Order.Infrasture", "Order.Infrasture", "{0ACF5A0A-00A6-4174-8D0B-4FF8944366FB}"
-	ProjectSection(SolutionItems) = preProject
-		ReadMe.txt = ReadMe.txt
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innova.API", "Innova.API\Innova.API.csproj", "{11156824-4C50-43B7-95C5-0888A3368581}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,27 +21,9 @@ Global
 		{B8E7AF5B-67CD-4118-A638-481FF92CB323}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8E7AF5B-67CD-4118-A638-481FF92CB323}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8E7AF5B-67CD-4118-A638-481FF92CB323}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD732F40-FF6B-4C9A-83DE-8D0BF1FB9587}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD732F40-FF6B-4C9A-83DE-8D0BF1FB9587}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD732F40-FF6B-4C9A-83DE-8D0BF1FB9587}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD732F40-FF6B-4C9A-83DE-8D0BF1FB9587}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11156824-4C50-43B7-95C5-0888A3368581}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11156824-4C50-43B7-95C5-0888A3368581}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11156824-4C50-43B7-95C5-0888A3368581}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11156824-4C50-43B7-95C5-0888A3368581}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{BD732F40-FF6B-4C9A-83DE-8D0BF1FB9587} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
-		{1F0C4F9F-C511-402B-A51C-0D7560A7D09B} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
-		{5D3BF994-97EC-426B-AC59-39500F2356B0} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
-		{E02A053F-3F96-4A22-B3A5-319747606EF9} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
-		{7AD6BA7B-4078-4FA7-B52E-696B79B23BC4} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
-		{D3B6B0A4-ADA3-449D-BD42-48734F4F1A70} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
-		{0ACF5A0A-00A6-4174-8D0B-4FF8944366FB} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
-		{11156824-4C50-43B7-95C5-0888A3368581} = {D4392713-E4B5-4CEC-8E56-1E30A31F07F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBE35511-255E-4C7A-8DA6-AB4088F90F12}
