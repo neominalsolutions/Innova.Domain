@@ -92,6 +92,8 @@ namespace Account.Console.Data.Contexts
       // yukarıda domain eventler fırlatılarak entity stateleri domain serviceler vasıtası ile kontrol edilir.validate edilir. veya bir aggreagate den başka bir aggregate'e müdehale edilip başka bir aggregate state değişimi olması sağlanır. ve değişen tüm aggregateler ve aggregate altındaki tüm entity stateleri database savechanges ile uygulanır.
       // Single Transaction Scope
       await this.mediator.DispatchDomainEventsAsync(this);
+      // alt işlemlerde bir sorun varsa ana işlemin transaction gerçekleştirme
+
       return await base.SaveChangesAsync(cancellationToken); // tek bir execute sorgusu
       
     }

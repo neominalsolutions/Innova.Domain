@@ -140,6 +140,7 @@ namespace Account.Domain.AccountAggregates
 
       accountDomainService.WithDraw(this, money, transactionChannelType);
 
+      _transactions.Add(new AccountTransaction(Id, money, AccountTransactionType.WithDraw, transactionChannelType));
     }
 
 

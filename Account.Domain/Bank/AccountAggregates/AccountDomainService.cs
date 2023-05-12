@@ -104,6 +104,12 @@ namespace Account.Domain.AccountAggregates
         throw new Exception("Günlük Online para çekme limit 100,000 TL'dir");
       }
 
+      if(acc.Balance < Money.Zero(money.Currency))
+      {
+        // hesabımdaki bakiye bi işlemi yapmak için yetersiz ise
+        throw new Exception("Hesap bakiyesi yeterli değil");
+      } 
+
 
     }
   }

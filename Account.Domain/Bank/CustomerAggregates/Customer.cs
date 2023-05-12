@@ -1,4 +1,5 @@
-﻿using Account.Domain.SeedWorks;
+﻿using Account.Domain.Order.OrderAggregates;
+using Account.Domain.SeedWorks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,8 @@ namespace Account.Domain.CustomerAggregates
         // DDD de associations ihtiyaca göre olmalı ve karmaşıklığı engellemek için tek taraflı tanımlanmlıdır. Müşterinin hesaplarına müşteri üzerinden erişilir.
         // Hesaptan müşteri erişilmemelidir.
         public IReadOnlyList<Domain.AccountAggregates.Account> Accounts { get; }
+        
+        
 
 
 
