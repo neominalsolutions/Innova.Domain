@@ -1,4 +1,6 @@
-﻿using Account.Domain.AccountAggregates;
+﻿using Account.Console.Data.Contexts;
+using Account.Domain.AccountAggregates;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,34 +12,49 @@ namespace Account.Console.Data
 {
   public class EFAccountRepository : IAccountRepository
   {
-    public Task CreateAsync(Domain.AccountAggregates.Account root)
+    private readonly BankContext bankContext;
+
+
+    public EFAccountRepository(BankContext bankContext)
     {
-      throw new NotImplementedException();
+      this.bankContext = bankContext;
     }
 
-    public Task DeleteAsync(string Id)
+    public async Task CreateAsync(Domain.AccountAggregates.Account root)
     {
-      throw new NotImplementedException();
+      await this.bankContext.Accounts.AddAsync(root);
+    }
+
+    public async Task DeleteAsync(string Id)
+    {
+      var rootEntity = await this.bankContext.Accounts.FindAsync(Id);
+
+      if (rootEntity is null)
+        throw new Exception("Entity Not Found");
+
+      this.bankContext.Accounts.Remove(rootEntity);
     }
 
     public Task<Domain.AccountAggregates.Account> FindAsync(Expression<Func<Domain.AccountAggregates.Account, bool>> expression)
     {
-      throw new NotImplementedException();
+      return this.bankContext.Accounts.Include(x => x.Transactions).Where(expression).FirstOrDefaultAsync();
     }
 
     public IQueryable Query(Expression<Func<Domain.AccountAggregates.Account, bool>> expression)
     {
-      throw new NotImplementedException();
+      return this.bankContext.Accounts.Where(expression).AsNoTracking().AsQueryable();
     }
 
-    public Task UpdateAsync(Domain.AccountAggregates.Account root)
+    public async Task UpdateAsync(Domain.AccountAggregates.Account root)
     {
-      throw new NotImplementedException();
+      //this.bankContext.Attach(root);
+      // asNoTracking neden hata veriyor Attach yapmamıza rağmen
+      this.bankContext.Accounts.Update(root);
     }
 
-    public Task<List<Domain.AccountAggregates.Account>> WhereAsync(Expression<Func<Domain.AccountAggregates.Account, bool>> expression)
+    public async Task<List<Domain.AccountAggregates.Account>> WhereAsync(Expression<Func<Domain.AccountAggregates.Account, bool>> expression)
     {
-      throw new NotImplementedException();
+      return await this.bankContext.Accounts.Where(expression).ToListAsync();
     }
   }
 }

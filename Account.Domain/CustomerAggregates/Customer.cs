@@ -35,6 +35,8 @@ namespace Account.Domain.CustomerAggregates
     public string FullName { get { return $"{Name} {SurName}"; } }
 
     // Müşterinin hesaplarını görmek istiyoruz
+    // DDD de associations ihtiyaca göre olmalı ve karmaşıklığı engellemek için tek taraflı tanımlanmlıdır. Müşterinin hesaplarına müşteri üzerinden erişilir.
+    // Hesaptan müşteri erişilmemelidir.
     public IReadOnlyList<Account.Domain.AccountAggregates.Account> Accounts { get; }
 
 

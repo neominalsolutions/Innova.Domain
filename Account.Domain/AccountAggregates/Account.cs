@@ -21,10 +21,10 @@ namespace Account.Domain.AccountAggregates
 
 
     public bool IsClosed { get; private set; } // Müşterinin hesabının kapalı olup olmadığı
-    public string CloseReason { get; private set; }
+    public string? CloseReason { get; private set; }
 
     public bool IsBlocked { get; private set; } // Hesap bloke edildiğinde para çekme ve para gönderme işlemleri yapılmasın
-    public string BlockReason { get; private set; }
+    public string? BlockReason { get; private set; }
 
     /// <summary>
     /// Deposit ve WithDraw işlemleri olduğunda sadece account transaction'a append only kayıt düşücez.
