@@ -1,6 +1,6 @@
 ﻿using Account.Console.Data.Contexts.AccountConfigurations;
 using Account.Console.Infrastructure;
-using Account.Domain.AccountAggregates;
+using Account.Domain.CustomerAggregates;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Account.Console.Data.Contexts
 {
-  /// <summary>
-  /// Bankacılık işlemlerini yönettiğimiz Bounded Context, Müşterilerin Hesaplarının yöntetimi yaparız. Para çekme ve Para yatırma işlemleri bu Bounded Context üzerinden yapılır.
-  /// </summary>
-  public class BankContext:DbContext
+    /// <summary>
+    /// Bankacılık işlemlerini yönettiğimiz Bounded Context, Müşterilerin Hesaplarının yöntetimi yaparız. Para çekme ve Para yatırma işlemleri bu Bounded Context üzerinden yapılır.
+    /// </summary>
+    public class BankContext:DbContext
   {
 
     private readonly IMediator mediator;
@@ -26,8 +26,8 @@ namespace Account.Console.Data.Contexts
 
     // DbSet ile tabloların tanımını yaptık
     // DbSetleri DDD da aggregate bazlı tutuyoruz.
-    public DbSet<Account.Domain.AccountAggregates.Account> Accounts { get; set; }
-    public DbSet<Account.Domain.CustomerAggregates.Customer> Customers { get; set; }
+    public DbSet<Domain.AccountAggregates.Account> Accounts { get; set; }
+    public DbSet<Customer> Customers { get; set; }
 
 
     /// <summary>
@@ -51,21 +51,21 @@ namespace Account.Console.Data.Contexts
 
 
       // PK
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().ToTable("Account", "BankContext");
+      modelBuilder.Entity<Domain.AccountAggregates.Account>().ToTable("Account", "BankContext");
       // veri tabanında direk şema bazlı tabloları ayırmak için kullandık
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().HasKey(x => x.Id);
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().HasIndex(x => x.AccountNumber).IsUnique();
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().HasIndex(x => x.IBAN).IsUnique();
+      modelBuilder.Entity<Domain.AccountAggregates.Account>().HasKey(x => x.Id);
+      modelBuilder.Entity<Domain.AccountAggregates.Account>().HasIndex(x => x.AccountNumber).IsUnique();
+      modelBuilder.Entity<Domain.AccountAggregates.Account>().HasIndex(x => x.IBAN).IsUnique();
       // value object değerlerin database de konfigürasyonu
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().OwnsOne(x => x.Balance).Property(x => x.Amount).HasColumnName("Balance_Amount");
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().OwnsOne(x => x.Balance).Property(x => x.Currency).HasColumnName("Balance_Currecy");
+      modelBuilder.Entity<Domain.AccountAggregates.Account>().OwnsOne(x => x.Balance).Property(x => x.Amount).HasColumnName("Balance_Amount");
+      modelBuilder.Entity<Domain.AccountAggregates.Account>().OwnsOne(x => x.Balance).Property(x => x.Currency).HasColumnName("Balance_Currecy");
       // enumerations
 
-      modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().HasMany(x => x.Transactions);
+      modelBuilder.Entity<Domain.AccountAggregates.Account>().HasMany(x => x.Transactions);
 
       // account Transactions adında bir navigation property sahip
       // field üzerinden propertylere değer aktarırken bunu ef ye söylediğimiz bir teknik
-      var accountTransactionNavigation = modelBuilder.Entity<Account.Domain.AccountAggregates.Account>().Metadata.FindNavigation(nameof(Account.Domain.AccountAggregates.Account.Transactions));
+      var accountTransactionNavigation = modelBuilder.Entity<Domain.AccountAggregates.Account>().Metadata.FindNavigation(nameof(Domain.AccountAggregates.Account.Transactions));
 
       accountTransactionNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
@@ -74,12 +74,12 @@ namespace Account.Console.Data.Contexts
 
       // customer ayarları
 
-      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().ToTable("Customer", "BankContext");
-      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().HasKey(x => x.Id);
-      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().Property(x => x.Name).HasMaxLength(50);
-      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().Property(x => x.SurName).HasMaxLength(70);
-      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().HasIndex(x => x.PhoneNumber).IsUnique();
-      modelBuilder.Entity<Domain.CustomerAggregates.Customer>().HasMany(x => x.Accounts);
+      modelBuilder.Entity<Customer>().ToTable("Customer", "BankContext");
+      modelBuilder.Entity<Customer>().HasKey(x => x.Id);
+      modelBuilder.Entity<Customer>().Property(x => x.Name).HasMaxLength(50);
+      modelBuilder.Entity<Customer>().Property(x => x.SurName).HasMaxLength(70);
+      modelBuilder.Entity<Customer>().HasIndex(x => x.PhoneNumber).IsUnique();
+      modelBuilder.Entity<Customer>().HasMany(x => x.Accounts);
 
 
        base.OnModelCreating(modelBuilder);

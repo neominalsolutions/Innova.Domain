@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="AccountAggregates\Events\" />
+    <Folder Include="Bank\AccountAggregates\Events\" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Account.Console.Application
 {
 
-  public class DepositService : IDepositService<AccountDepositDto, string>
+    public class DepositService : IDepositService<AccountDepositDto, string>
   {
 
     private readonly IAccountRepository accountRepository;

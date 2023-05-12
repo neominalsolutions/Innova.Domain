@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Account.Domain.AccountAggregates.Exceptions
 {
-  public class TranferLimitException:ApplicationException
-  {
-    public TranferLimitException(string message):base(message)
+    public class TranferLimitException : ApplicationException
     {
+        public TranferLimitException(string message) : base(message)
+        {
 
+        }
     }
-  }
 }

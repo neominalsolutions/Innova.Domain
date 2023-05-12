@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Account.Console.Data.Contexts.AccountConfigurations
 {
-  public class AccountTransactionConfiguration : IEntityTypeConfiguration<Account.Domain.AccountAggregates.AccountTransaction>
+    public class AccountTransactionConfiguration : IEntityTypeConfiguration<AccountTransaction>
   {
     public void Configure(EntityTypeBuilder<AccountTransaction> builder)
     {

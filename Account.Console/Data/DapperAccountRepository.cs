@@ -1,4 +1,5 @@
-﻿using Account.Domain.AccountAggregates;
+﻿
+using Account.Domain.AccountAggregates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Account.Console.Data
 {
-  public class DapperAccountRepository : IAccountRepository
+    public class DapperAccountRepository : IAccountRepository
   {
     public Task CreateAsync(Domain.AccountAggregates.Account root)
     {

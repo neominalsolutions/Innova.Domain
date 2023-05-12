@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Account.Domain.AccountAggregates
+namespace Account.Domain.CustomerAggregates
 {
-  public interface IAccountRepository:IRepository<Account>
-  {
-  }
+    public interface ICustomerRepository : IRepository<Customer>
+    {
+    }
 }

@@ -6,6 +6,8 @@ using Account.Console.Dto;
 using Account.Domain.AccountAggregates;
 using Account.Domain.SeedWorks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -145,6 +147,8 @@ public class Program
 
       accountRepo.UpdateAsync(acc).GetAwaiter().GetResult(); // state değiştirdik.
       int result =  bankContext.SaveChangesAsync().GetAwaiter().GetResult();
+
+      
 
     }
     catch (Exception ex)

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Account.Console.Data
 {
-  public class EFAccountRepository : IAccountRepository
+    public class EFAccountRepository : IAccountRepository
   {
     private readonly BankContext bankContext;
 
