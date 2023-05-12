@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Account.Domain.AccountAggregates
 {
-  // DepositSubmitted Hangi event notify edilecektir.
-  // Handler event consume ederler.
-  internal class DepositSubmittedHandler : INotificationHandler<DepositSubmitted>
+    // DepositSubmitted Hangi event notify edilecektir.
+    // Handler event consume ederler.
+    internal class DepositSubmittedHandler : INotificationHandler<DepositSubmitted>
   {
     private readonly IAccountDomainService accountDomainService;
     private readonly IAccountRepository accountRepository;

@@ -146,10 +146,6 @@ public class Program
       accountRepo.UpdateAsync(acc).GetAwaiter().GetResult(); // state değiştirdik.
       int result =  bankContext.SaveChangesAsync().GetAwaiter().GetResult();
 
-
-
-
-
     }
     catch (Exception ex)
     {
