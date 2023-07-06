@@ -40,10 +40,12 @@ namespace Account.Domain.Order.OrderAggregates
     {
       Id = Guid.NewGuid().ToString();
       BuyerId = buyerId;
+      Status = OrderStatus.Submitted;
+      ShipAddress = new ShipAddress("ist", "bst", "cts");
     }
 
 
-    private void AddItem(string description, int quantity, decimal listPrice)
+    public void AddItem(string description, int quantity, decimal listPrice)
     {
 
       // aynı üründen 1 kerede 20 adeten fazla alınmasını engelleyebilirim. Maksimum 

@@ -85,8 +85,12 @@ namespace Account.Domain.AccountAggregates
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Math.Round(Amount, 8); // 8 karakterden sonrası için value eşitliği olsun
-            yield return Currency.Trim(); // boşluksuz yazılsın TL, Dolar $
+
+      yield return Amount;
+      yield return Currency;
+            // 8,99999999999 $  8,99998888888 $
+            //yield return Math.Round(Amount, 8); // 8 karakterden sonrası için value eşitliği olsun
+            //yield return Currency.Trim(); // boşluksuz yazılsın TL, Dolar $
         }
     }
 }

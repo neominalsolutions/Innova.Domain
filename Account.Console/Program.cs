@@ -88,6 +88,16 @@ public class Program
     var mediator = host.Services.GetRequiredService<IMediator>();
 
     var bankContext = host.Services.GetRequiredService<BankContext>();
+    var orderContext = host.Services.GetRequiredService<OrderContext>();
+    //var rootContext = host.Services.GetRequiredService<RootTransaction>();
+
+
+    //var acc = new Account.Domain.AccountAggregates.Account(accountNumber:"324e324324",iban:"TR 4332"
+    //  ,customerId:"1");
+
+
+    //acc.Balance = new Money(40, "TL");
+    //acc.AccountNumber = "324234324";
 
     try
     {
@@ -141,15 +151,21 @@ public class Program
 
 
       var acc = accountRepo.FindAsync(x => x.AccountNumber == "111-222-333-444").GetAwaiter().GetResult();
-      // acc.Deposit(new Money(35000, "TL"), AccountTransactionChannelType.ATM, accountDomainService); 1.yöntem Double Dispatch Yöntemi
+      //acc.Deposit(new Money(3000, "TL"), AccountTransactionChannelType.ATM, accountDomainService);/* 1.yöntem Double Dispatch Yöntemi
 
-      // acc.Deposit(new Money(200, "TL"), AccountTransactionChannelType.Online);  Domain Event Yöntemi
+      acc.Deposit(new Money(203, "TL"), AccountTransactionChannelType.Online);  //Domain Event Yöntemi
 
       // ATM maksimum 30.000 case
-      acc.Deposit(new Money(50000, "TL"), AccountTransactionChannelType.ATM);
+      // acc.Deposit(new Money(50000, "TL"), AccountTransactionChannelType.ATM);
 
       accountRepo.UpdateAsync(acc).GetAwaiter().GetResult(); // state değiştirdik.
-      int result = bankContext.SaveChangesAsync().GetAwaiter().GetResult();
+      //int result3 = rootContext.SaveChangesAsync().GetAwaiter().GetResult();
+
+      //int result = bankContext.SaveChangesAsync().GetAwaiter().GetResult();
+      //int result2 = orderContext.SaveChangesAsync().GetAwaiter().GetResult();
+
+      var rootContext = new RootTransaction(orderContext, bankContext);
+      rootContext.CommitAsync().GetAwaiter().GetResult();
 
 
 
@@ -230,9 +246,9 @@ public class Program
   public static void Main(string[] args)
   {
 
-    // DepositAndWithDraw(args);
+    DepositAndWithDraw(args);
 
-    OrderSubmit(args);
+    //OrderSubmit(args);
 
 
   }

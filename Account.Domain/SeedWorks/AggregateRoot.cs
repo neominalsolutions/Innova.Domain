@@ -18,7 +18,7 @@ namespace Account.Domain.SeedWorks
   }
 
 
-  public class AggregateRoot : Entity<string>, IAggregateRoot
+  public abstract class AggregateRoot : Entity<string>, IAggregateRoot
   {
     // field
     private List<INotification> _domainEvents = new List<INotification>();

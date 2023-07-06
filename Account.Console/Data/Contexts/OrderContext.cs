@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Account.Console.Data.Contexts
 {
-  public class OrderContext:DbContext
+  public class OrderContext: DbContext
   {
 
     private readonly IMediator mediator;
@@ -36,14 +36,15 @@ namespace Account.Console.Data.Contexts
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      optionsBuilder.UseSqlServer("Server=(localDB)\\MSSQLLocalDB;Database=DDDSampleDB;Trusted_Connection=True;MultipleActiveResultSets=True");
+      optionsBuilder.UseSqlServer("Server=(localDB)\\MyLocalDb;Database=DDDSampleDB;Trusted_Connection=True;MultipleActiveResultSets=True");
     }
 
     public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-      // alt işlemlerde bir sorun varsa ana işlemin transaction gerçekleştirme
       await this.mediator.DispatchDomainEventsAsync(this);
-      return await base.SaveChangesAsync(cancellationToken);
+      // alt işlemlerde bir sorun varsa ana işlemin transaction gerçekleştirme
+      //await this.mediator.DispatchDomainEventsAsync(this);
+      return  await base.SaveChangesAsync(cancellationToken);
     }
 
 

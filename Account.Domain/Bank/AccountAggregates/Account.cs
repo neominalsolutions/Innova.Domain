@@ -124,6 +124,9 @@ namespace Account.Domain.AccountAggregates
       // eğer ki aşağıdaki kural setlerinden geçebilir exception almaz isek bu durumda Balance değeri artsın.
       Balance += money;
 
+
+
+
       // domain kurallarını kontrol etmeyi domain evente bıraktık bu sayede account aggregate ile account aggregate dışındaki başka aggregateler ile işlem yapma fırsatı buluyoruz.
       var @event = new DepositSubmitted(this, money, transactionChannelType);
       AddDomainEvent(@event);

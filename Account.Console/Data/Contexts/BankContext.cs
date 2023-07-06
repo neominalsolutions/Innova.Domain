@@ -36,7 +36,7 @@ namespace Account.Console.Data.Contexts
     /// <param name="optionsBuilder"></param>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      optionsBuilder.UseSqlServer("Server=(localDB)\\MSSQLLocalDB;Database=DDDSampleDB;Trusted_Connection=True;MultipleActiveResultSets=True");
+      optionsBuilder.UseSqlServer("Server=(localDB)\\MyLocalDb;Database=DDDSampleDB;Trusted_Connection=True;MultipleActiveResultSets=True");
     }
 
     /// <summary>
@@ -85,18 +85,27 @@ namespace Account.Console.Data.Contexts
        base.OnModelCreating(modelBuilder);
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public async override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
-      // save olmadan önce entityler üzerinde tanımlanmış tüm domain eventleri fırlatmak pulish etmek nesnelerin statelerini domain eventler vasıtası ile değiştirmek sonrasında savechanges ile context bazlı single transaction bütünlülüğü sağlamak.
-
-      // yukarıda domain eventler fırlatılarak entity stateleri domain serviceler vasıtası ile kontrol edilir.validate edilir. veya bir aggreagate den başka bir aggregate'e müdehale edilip başka bir aggregate state değişimi olması sağlanır. ve değişen tüm aggregateler ve aggregate altındaki tüm entity stateleri database savechanges ile uygulanır.
-      // Single Transaction Scope
       await this.mediator.DispatchDomainEventsAsync(this);
-      // alt işlemlerde bir sorun varsa ana işlemin transaction gerçekleştirme
 
-      return await base.SaveChangesAsync(cancellationToken); // tek bir execute sorgusu
-      
+      return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
+
+    //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    //{
+    //  // save olmadan önce entityler üzerinde tanımlanmış tüm domain eventleri fırlatmak pulish etmek nesnelerin statelerini domain eventler vasıtası ile değiştirmek sonrasında savechanges ile context bazlı single transaction bütünlülüğü sağlamak.
+
+    //  // yukarıda domain eventler fırlatılarak entity stateleri domain serviceler vasıtası ile kontrol edilir.validate edilir. veya bir aggreagate den başka bir aggregate'e müdehale edilip başka bir aggregate state değişimi olması sağlanır. ve değişen tüm aggregateler ve aggregate altındaki tüm entity stateleri database savechanges ile uygulanır.
+    //  // Single Transaction Scope
+
+    //  // alt işlemlerde bir sorun varsa ana işlemin transaction gerçekleştirme
+    //  await this.mediator.DispatchDomainEventsAsync(this);
+    //  return await base.SaveChangesAsync(cancellationToken); // tek bir execute sorgusu
+
+
+
+    //}
 
   }
 }
